@@ -5,6 +5,8 @@ function init() {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const { latitude, longitude } = position.coords;
+                localStorage.setItem('currentLatitude', JSON.stringify(latitude));
+                localStorage.setItem('currentLongitude', JSON.stringify(longitude));
                 const cityName = await getCityName(latitude, longitude);
                 localStorage.setItem('currentCity', JSON.stringify(cityName));
                 // получение погоды
@@ -19,7 +21,6 @@ function init() {
         }
     }
     const savedCity = JSON.parse(localStorage.getItem('currentCity'));
-        console.log("Город из хранилища:", savedCity);    
 }
 
 // получение названия города
@@ -59,16 +60,36 @@ function showModal() {
     document.body.appendChild(modal);
     modal.style.display = "block";
 
-    document.getElementById("cityInputBtn").addEventListener('click', () => {
+    document.getElementById("cityInputBtn").addEventListener('click', async () => {
         const cityValue = document.getElementById("inputCity").value.trim();
         if (cityValue === "") {
             return;
         }
+        const coords = await getCityCoords(cityValue);
+        localStorage.setItem('currentLatitude', JSON.stringify(coords.latitude));
+        localStorage.setItem('currentLongitude', JSON.stringify(coords.longitude));
         localStorage.setItem('currentCity', JSON.stringify(cityValue));
         modal.style.display = "none";
-        // получение коордиант
         // получение погоды
     })
+}
+
+async function getCityCoords(cityName) {
+    try {
+        const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=ru&format=json`);
+        const data = await response.json();
+
+        if (!data.results || data.results.length === 0) {
+            alert ("город не найден")
+            throw new Error("город не найден");
+        }
+        return {
+            latitude: data.results[0].latitude,
+            longitude: data.results[0].longitude
+        };
+    } catch (error) {
+        throw error;
+    }
 }
 
 init();
