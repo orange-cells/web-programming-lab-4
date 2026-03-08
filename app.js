@@ -1,3 +1,14 @@
+async function start() {  // иначе отрисовывается только после обновления страницы
+    const latitude = JSON.parse(localStorage.getItem('currentLatitude'));
+    const longitude = JSON.parse(localStorage.getItem('currentLongitude'));
+    const city = JSON.parse(localStorage.getItem('currentCity'));
+    if (latitude && longitude && city) {
+        createWeatherCard(city, latitude, longitude);
+    } else {
+        init();
+    }
+}
+
 // запуск программы: получение местоположения
 function init() {
     if (!localStorage.getItem('currentCity')) {
@@ -9,11 +20,11 @@ function init() {
                 localStorage.setItem('currentLongitude', JSON.stringify(longitude));
                 const cityName = await getCityName(latitude, longitude);
                 localStorage.setItem('currentCity', JSON.stringify(cityName));
+                createWeatherCard(cityName, latitude, longitude);
             },
-
-            () => {
-                showModal();
-            }
+        () => {
+            showModal();
+        }
         );
         } else {
             showModal();
@@ -68,6 +79,7 @@ function showModal() {
         localStorage.setItem('currentLongitude', JSON.stringify(coords.longitude));
         localStorage.setItem('currentCity', JSON.stringify(cityValue));
         modal.style.display = "none";
+        createWeatherCard(cityValue, coords.latitude, coords.longitude);
     })
 }
 
@@ -186,13 +198,5 @@ async function createWeatherCard(city, lat, long) {
     card.appendChild(columnsContainer);
     document.body.appendChild(card);
 }
-
-init();
-
-const latitude = JSON.parse(localStorage.getItem('currentLatitude'));
-const longitude = JSON.parse(localStorage.getItem('currentLongitude'));
-const weatherData = getWeatherData(latitude,longitude);
-createWeatherCard(JSON.parse(localStorage.getItem('currentCity')), latitude, longitude);
-console.log(weatherData)
-
+start();
 // localStorage.clear()
