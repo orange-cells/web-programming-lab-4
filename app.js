@@ -94,7 +94,6 @@ function showModal() {
             document.querySelector('.weather-card').remove();
         }
         createWeatherCard(cityValue, coords.latitude, coords.longitude);
-        window.location.reload();
     })
 }
 
@@ -214,15 +213,16 @@ async function createWeatherCard(city, lat, long) {
         delButton.className = "delete-button";
         delButton.textContent = 'x';
         card.appendChild(delButton);
+        document.querySelector('.otherCitiesCards').appendChild(card);
         delButton.addEventListener('click', () => {
             let otherCities = JSON.parse(localStorage.getItem('otherCities'));
             otherCities = otherCities.filter(c => c !== city);
             localStorage.setItem('otherCities', JSON.stringify(otherCities));
             card.remove();
         })
+    } else {
+        document.querySelector('.currentCityCard').appendChild(card);
     }
-
-    document.body.appendChild(card);
 }
 
 document.getElementById("changeCity").addEventListener('click', () => {
@@ -267,7 +267,6 @@ function showAddCityModal() {
             otherCities.push(cityValue);
             localStorage.setItem('otherCities', JSON.stringify(otherCities));
             createWeatherCard(cityValue, coords.latitude, coords.longitude);
-            window.location.reload();
         }    
     })
 }

@@ -5,6 +5,10 @@ body {
     gap: 10px;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
+.otherCitiesCards {
+    display: grid;
+    gap: 10px;
+}
 header {
     display: flex;
     justify-content: space-between;
