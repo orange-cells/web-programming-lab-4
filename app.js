@@ -53,7 +53,7 @@ function showModal() {
     modalContent.className = "modal-content";
 
     const modalText = document.createElement('h2');
-    modalText.textContent = "не получилось определить ваше местоположение";
+    modalText.textContent = "введите ваше местоположение";
 
     const inputCity = document.createElement('input');
     inputCity.id = "inputCity"
@@ -79,6 +79,9 @@ function showModal() {
         localStorage.setItem('currentLongitude', JSON.stringify(coords.longitude));
         localStorage.setItem('currentCity', JSON.stringify(cityValue));
         modal.style.display = "none";
+        if (document.querySelector('.weather-card')){
+            document.querySelector('.weather-card').remove();
+        }
         createWeatherCard(cityValue, coords.latitude, coords.longitude);
     })
 }
@@ -198,5 +201,10 @@ async function createWeatherCard(city, lat, long) {
     card.appendChild(columnsContainer);
     document.body.appendChild(card);
 }
+
+document.getElementById("changeCity").addEventListener('click', () => {
+    showModal();
+})
+
 start();
 // localStorage.clear()
