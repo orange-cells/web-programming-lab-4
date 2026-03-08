@@ -7,6 +7,13 @@ async function start() {  // иначе отрисовывается тольк�
     } else {
         init();
     }
+    const otherCities = JSON.parse(localStorage.getItem('otherCities'));
+    if (otherCities && !(otherCities.length === 0)) {
+        otherCities.forEach(async function(city){
+            const coords = await getCityCoords(city);
+            createWeatherCard(city, coords.latitude, coords.longitude);
+        })
+    }
 }
 
 // запуск программы: получение местоположения
@@ -75,6 +82,10 @@ function showModal() {
             return;
         }
         const coords = await getCityCoords(cityValue);
+        let otherCities = JSON.parse(localStorage.getItem('otherCities'));
+        otherCities = otherCities.filter(c => c !== cityValue);
+        localStorage.setItem('otherCities', JSON.stringify(otherCities));
+
         localStorage.setItem('currentLatitude', JSON.stringify(coords.latitude));
         localStorage.setItem('currentLongitude', JSON.stringify(coords.longitude));
         localStorage.setItem('currentCity', JSON.stringify(cityValue));
@@ -83,6 +94,7 @@ function showModal() {
             document.querySelector('.weather-card').remove();
         }
         createWeatherCard(cityValue, coords.latitude, coords.longitude);
+        window.location.reload();
     })
 }
 
@@ -146,7 +158,7 @@ async function createWeatherCard(city, lat, long) {
         if (i === 1) {
             startHour = 24;
             endHour = 47;
-        } else {
+        } else if (i === 2) {
             startHour = 48;
             endHour = 71;
         }
@@ -177,9 +189,7 @@ async function createWeatherCard(city, lat, long) {
         const precip = document.createElement('div');
         precip.classList.add('precipitation');
         precip.textContent = `осадки: ${sum(data.precipitation.slice(startHour, endHour)).toFixed(1)} мм`;
-        console.log(data.precipitation.slice(startHour, endHour))
-        console.log(sum([0, 0, 0, 0, 0.1, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.2, 0.2, 0.1, 0]))
-
+       
         // вероятность осадков
         const precipProb = document.createElement('div');
         precipProb.classList.add('precipitation_probability');
@@ -199,6 +209,19 @@ async function createWeatherCard(city, lat, long) {
         columnsContainer.appendChild(column);
     }
     card.appendChild(columnsContainer);
+    if (city !== JSON.parse(localStorage.getItem('currentCity'))) {
+        const delButton = document.createElement('button');
+        delButton.className = "delete-button";
+        delButton.textContent = 'x';
+        card.appendChild(delButton);
+        delButton.addEventListener('click', () => {
+            let otherCities = JSON.parse(localStorage.getItem('otherCities'));
+            otherCities = otherCities.filter(c => c !== city);
+            localStorage.setItem('otherCities', JSON.stringify(otherCities));
+            card.remove();
+        })
+    }
+
     document.body.appendChild(card);
 }
 
@@ -206,5 +229,53 @@ document.getElementById("changeCity").addEventListener('click', () => {
     showModal();
 })
 
+function showAddCityModal() {
+    const modal = document.createElement('div');
+    modal.className = "modal";
+
+    const modalContent = document.createElement('div');
+    modalContent.className = "modal-content";
+
+    const modalText = document.createElement('h2');
+    modalText.textContent = "введите город";
+
+    const inputCity = document.createElement('input');
+    inputCity.id = "inputCity"
+    inputCity.type = "text";
+    inputCity.placeholder = "сюда введите";
+
+    const button = document.createElement('button');
+    button.id = "cityInputBtn"
+    button.textContent = "далее";
+    
+    modalContent.append(modalText, inputCity, button);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    modal.style.display = "block";
+
+    document.getElementById("cityInputBtn").addEventListener('click', async () => {
+        const cityValue = document.getElementById("inputCity").value.trim();
+        const currentCity = JSON.parse(localStorage.getItem('currentCity'));
+        if (cityValue === "" || cityValue === currentCity) {
+            alert('введите что-то еще')
+            return;
+        }
+        const coords = await getCityCoords(cityValue);
+        modal.style.display = "none";
+        const otherCities = JSON.parse(localStorage.getItem('otherCities')) || [];
+        if (!otherCities.includes(cityValue)) {
+            otherCities.push(cityValue);
+            localStorage.setItem('otherCities', JSON.stringify(otherCities));
+            createWeatherCard(cityValue, coords.latitude, coords.longitude);
+            window.location.reload();
+        }    
+    })
+}
+
+document.getElementById("addCity").addEventListener('click', () => {
+    showAddCityModal();
+})
+
 start();
+console.log(localStorage)
 // localStorage.clear()

@@ -1,5 +1,8 @@
 body {
+    background-color: #aacaed1c;
+    display: grid;
     margin: 0;
+    gap: 10px;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 header {
@@ -54,6 +57,7 @@ main {
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     padding: 30px;
+    padding-bottom: 10px;
     width: 90%;
     max-width: 800px;
 }
@@ -107,6 +111,11 @@ h2 {
     padding: 5px;
     background: #fff;
     border-radius: 8px;
+}
+.delete-button {
+    margin-top: 10px;
+    height: 30px;
+    width: 30px;
 }
 
 @media (max-width: 790px) {
