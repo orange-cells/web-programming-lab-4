@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 header {
     display: flex;
@@ -17,9 +18,15 @@ button {
     border-radius: 18px;
     height: 40px;
 }
+button:hover {
+    background-color: #3e7aba;
+}
 #changeCity {
     background-color: white;
     color: #007bff;
+}
+#changeCity:hover {
+    background-color: #d2e8ff;
 }
 main {
     padding: 10px;
@@ -41,4 +48,69 @@ main {
     border-radius: 10px;
     width: 300px;
     text-align: center;
+}
+.weather-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+}
+h2 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.weather-columns {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+.weather-column {
+    background: #a5cfff5c;
+    border-radius: 15px;
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+.weather-column:hover {
+    transform: translateY(-5px);
+}
+.day {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+.tempContainer {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 15px 0;
+}
+.temp {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #4a92de;
+}
+.temp:last-child {
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+.temp:last-child::before {
+    content: "ощущается";
+    font-size: 0.7rem;
+    display: block;
+    color: #aaa;
+}
+.precipitation, .precipitation_probability, .relative_humidity, .wind_speed {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6c757d;
+    margin: 8px 0;
+    padding: 5px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+@media (max-width: 790px) {
+    .weather-columns {
+        flex-direction: column;
+    }
 }

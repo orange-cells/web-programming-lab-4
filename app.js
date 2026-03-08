@@ -19,7 +19,6 @@ function init() {
             showModal();
         }
     }
-    const savedCity = JSON.parse(localStorage.getItem('currentCity'));
 }
 
 // получение названия города
@@ -93,11 +92,99 @@ async function getCityCoords(cityName) {
 
 // получение погоды
 async function getWeatherData(latitude, longitude) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,wind_speed_10m&forecast_days=1`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,wind_speed_10m&forecast_days=3`;
     
     const response = await fetch(url);
     if (!response.ok) throw new Error("Ошибка при загрузке погоды");
     return await response.json();
+}
+
+async function createWeatherCard(city, lat, long) {
+    // функция для нахождения среднего
+    const average = array => array.reduce((a, b) => a + b) / array.length;
+    // функция для суммы
+    function sum(array) {
+        let arraySum = 0;
+        array.forEach(el => {
+            arraySum += el;
+        });
+        return arraySum;
+    }
+
+    // получение прогноза
+    const data = (await getWeatherData(lat, long)).hourly;
+
+    const card = document.createElement('div');
+    card.classList.add('weather-card');
+
+    const cityName = document.createElement('h2');
+    cityName.textContent = city;
+    card.appendChild(cityName);
+
+    const columnsContainer = document.createElement('div');
+    columnsContainer.classList.add('weather-columns');
+
+    const dayLabels = ['сегодня', 'завтра', 'послезавтра'];
+    for (let i = 0; i < 3; i++) {
+        let startHour = 0;
+        let endHour = 23;
+        if (i === 1) {
+            startHour = 24;
+            endHour = 47;
+        } else {
+            startHour = 48;
+            endHour = 71;
+        }
+        const column = document.createElement('div');
+        column.classList.add('weather-column');
+
+        // день
+        const label = document.createElement('div');
+        label.classList.add('day');
+        label.textContent = dayLabels[i];
+
+        // контейнер для температуры
+        const tempContainer = document.createElement('div');
+        tempContainer.classList.add('tempContainer');
+
+        // температура
+        const temp = document.createElement('div');
+        temp.classList.add('temp');
+        temp.textContent = `${average(data.temperature_2m.slice(startHour, endHour)).toFixed(1)}°C`;
+
+        // ощущается как
+        const tempFeels = document.createElement('div');
+        tempFeels.classList.add('temp');
+        tempFeels.textContent = `${average(data.apparent_temperature.slice(startHour, endHour)).toFixed(1)}°C`;
+        tempContainer.append(temp, tempFeels)
+
+        // осадки
+        const precip = document.createElement('div');
+        precip.classList.add('precipitation');
+        precip.textContent = `осадки: ${sum(data.precipitation.slice(startHour, endHour)).toFixed(1)} мм`;
+        console.log(data.precipitation.slice(startHour, endHour))
+        console.log(sum([0, 0, 0, 0, 0.1, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.2, 0.2, 0.1, 0]))
+
+        // вероятность осадков
+        const precipProb = document.createElement('div');
+        precipProb.classList.add('precipitation_probability');
+        precipProb.textContent = `вероятность осадков: ${average(data.precipitation_probability.slice(startHour, endHour)).toFixed(1)}%`;
+
+        // влажность
+        const humidity = document.createElement('div');
+        humidity.classList.add('relative_humidity');
+        humidity.textContent = `влажность: ${average(data.relative_humidity_2m.slice(startHour, endHour)).toFixed(1)}%`;
+        
+        // скорость ветра
+        const windSpeed = document.createElement('div');
+        windSpeed.classList.add('wind_speed');
+        windSpeed.textContent = `скорость ветра: ${average(data.wind_speed_10m.slice(startHour, endHour)).toFixed(1)} км/ч`;
+
+        column.append(label, tempContainer, precip, precipProb, humidity, windSpeed);
+        columnsContainer.appendChild(column);
+    }
+    card.appendChild(columnsContainer);
+    document.body.appendChild(card);
 }
 
 init();
@@ -105,6 +192,7 @@ init();
 const latitude = JSON.parse(localStorage.getItem('currentLatitude'));
 const longitude = JSON.parse(localStorage.getItem('currentLongitude'));
 const weatherData = getWeatherData(latitude,longitude);
+createWeatherCard(JSON.parse(localStorage.getItem('currentCity')), latitude, longitude);
 console.log(weatherData)
 
 // localStorage.clear()
