@@ -9,7 +9,6 @@ function init() {
                 localStorage.setItem('currentLongitude', JSON.stringify(longitude));
                 const cityName = await getCityName(latitude, longitude);
                 localStorage.setItem('currentCity', JSON.stringify(cityName));
-                // получение погоды
             },
 
             () => {
@@ -70,10 +69,10 @@ function showModal() {
         localStorage.setItem('currentLongitude', JSON.stringify(coords.longitude));
         localStorage.setItem('currentCity', JSON.stringify(cityValue));
         modal.style.display = "none";
-        // получение погоды
     })
 }
 
+// получение координат по названию города
 async function getCityCoords(cityName) {
     try {
         const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=ru&format=json`);
@@ -92,6 +91,20 @@ async function getCityCoords(cityName) {
     }
 }
 
+// получение погоды
+async function getWeatherData(latitude, longitude) {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,wind_speed_10m&forecast_days=1`;
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Ошибка при загрузке погоды");
+    return await response.json();
+}
+
 init();
-console.log(localStorage)
+
+const latitude = JSON.parse(localStorage.getItem('currentLatitude'));
+const longitude = JSON.parse(localStorage.getItem('currentLongitude'));
+const weatherData = getWeatherData(latitude,longitude);
+console.log(weatherData)
+
 // localStorage.clear()
