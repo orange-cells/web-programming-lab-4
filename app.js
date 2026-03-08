@@ -41,7 +41,11 @@ function showModal() {
     modal.style.display = "block";
 
     document.getElementById("cityInputBtn").addEventListener('click', () => {
-        localStorage.setItem('currentCity', JSON.stringify(document.getElementById("inputCity").value.trim()));
+        const cityValue = document.getElementById("inputCity").value.trim();
+        if (cityValue === "") {
+            return;
+        }
+        localStorage.setItem('currentCity', JSON.stringify(cityValue));
         modal.style.display = "none";
     })
 }
