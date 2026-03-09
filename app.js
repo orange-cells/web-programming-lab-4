@@ -84,8 +84,8 @@ function showModal() {
         modal.style.display = "none";
     })
 
-    document.querySelector(".cityInputBtn").addEventListener('click', async () => {
-        const cityValue = document.querySelector(".inputCity").value.trim();
+    modal.querySelector(".cityInputBtn").addEventListener('click', async () => {
+        const cityValue = modal.querySelector(".inputCity").value.trim();
         if (cityValue === "") {
             return;
         }
