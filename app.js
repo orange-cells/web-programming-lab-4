@@ -70,11 +70,19 @@ function showModal() {
     const button = document.createElement('button');
     button.id = "cityInputBtn"
     button.textContent = "далее";
+
+    const closeButton = document.createElement('button');
+    closeButton.id = "clsBtn"
+    closeButton.textContent = "x";
     
-    modalContent.append(modalText, inputCity, button);
+    modalContent.append(closeButton, modalText, inputCity, button);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
     modal.style.display = "block";
+
+    closeButton.addEventListener('click', () => {
+        modal.style.display = "none";
+    })
 
     document.getElementById("cityInputBtn").addEventListener('click', async () => {
         const cityValue = document.getElementById("inputCity").value.trim();
@@ -247,11 +255,19 @@ function showAddCityModal() {
     const button = document.createElement('button');
     button.id = "cityInputBtn"
     button.textContent = "далее";
+
+    const closeButton = document.createElement('button');
+    closeButton.id = "clsBtn"
+    closeButton.textContent = "x";
     
-    modalContent.append(modalText, inputCity, button);
+    modalContent.append(closeButton, modalText, inputCity, button);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
     modal.style.display = "block";
+
+    closeButton.addEventListener('click', () => {
+        modal.style.display = "none";
+    })
 
     document.getElementById("cityInputBtn").addEventListener('click', async () => {
         const cityValue = document.getElementById("inputCity").value.trim();

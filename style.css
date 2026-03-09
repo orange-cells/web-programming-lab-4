@@ -56,6 +56,10 @@ main {
     width: 300px;
     text-align: center;
 }
+#inputCity {
+    height: 30px;
+    border-radius: 18px;;
+}
 .weather-card {
     background: white;
     border-radius: 20px;
@@ -116,7 +120,7 @@ h2 {
     background: #fff;
     border-radius: 8px;
 }
-.delete-button {
+.delete-button, #clsBtn {
     margin-top: 10px;
     height: 30px;
     width: 30px;
