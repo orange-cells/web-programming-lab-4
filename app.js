@@ -7,7 +7,7 @@ async function start() {  // иначе отрисовывается тольк�
     } else {
         init();
     }
-    const otherCities = JSON.parse(localStorage.getItem('otherCities'));
+    const otherCities = JSON.parse(localStorage.getItem('otherCities')) || [];
     if (otherCities && !(otherCities.length === 0)) {
         otherCities.forEach(async function(city){
             const coords = await getCityCoords(city);
@@ -27,7 +27,7 @@ function init() {
                 localStorage.setItem('currentLongitude', JSON.stringify(longitude));
                 const cityName = await getCityName(latitude, longitude);
                 localStorage.setItem('currentCity', JSON.stringify(cityName));
-                createWeatherCard(cityName, latitude, longitude);
+                await createWeatherCard(cityName, latitude, longitude);
             },
         () => {
             showModal();
@@ -63,16 +63,16 @@ function showModal() {
     modalText.textContent = "введите ваше местоположение";
 
     const inputCity = document.createElement('input');
-    inputCity.id = "inputCity"
+    inputCity.className = "inputCity"
     inputCity.type = "text";
     inputCity.placeholder = "введите город";
 
     const button = document.createElement('button');
-    button.id = "cityInputBtn"
+    button.className = "cityInputBtn"
     button.textContent = "далее";
 
     const closeButton = document.createElement('button');
-    closeButton.id = "clsBtn"
+    closeButton.className = "clsBtn"
     closeButton.textContent = "x";
     
     modalContent.append(closeButton, modalText, inputCity, button);
@@ -84,13 +84,13 @@ function showModal() {
         modal.style.display = "none";
     })
 
-    document.getElementById("cityInputBtn").addEventListener('click', async () => {
-        const cityValue = document.getElementById("inputCity").value.trim();
+    document.querySelector(".cityInputBtn").addEventListener('click', async () => {
+        const cityValue = document.querySelector(".inputCity").value.trim();
         if (cityValue === "") {
             return;
         }
         const coords = await getCityCoords(cityValue);
-        let otherCities = JSON.parse(localStorage.getItem('otherCities'));
+        let otherCities = JSON.parse(localStorage.getItem('otherCities')) || [];
         otherCities = otherCities.filter(c => c !== cityValue);
         localStorage.setItem('otherCities', JSON.stringify(otherCities));
 
@@ -223,7 +223,7 @@ async function createWeatherCard(city, lat, long) {
         card.appendChild(delButton);
         document.querySelector('.otherCitiesCards').appendChild(card);
         delButton.addEventListener('click', () => {
-            let otherCities = JSON.parse(localStorage.getItem('otherCities'));
+            let otherCities = JSON.parse(localStorage.getItem('otherCities')) || [];
             otherCities = otherCities.filter(c => c !== city);
             localStorage.setItem('otherCities', JSON.stringify(otherCities));
             card.remove();
@@ -248,16 +248,16 @@ function showAddCityModal() {
     modalText.textContent = "введите город";
 
     const inputCity = document.createElement('input');
-    inputCity.id = "inputCity"
+    inputCity.className = "inputCity"
     inputCity.type = "text";
     inputCity.placeholder = "сюда введите";
 
     const button = document.createElement('button');
-    button.id = "cityInputBtn"
+    button.className = "cityInputBtn"
     button.textContent = "далее";
 
     const closeButton = document.createElement('button');
-    closeButton.id = "clsBtn"
+    closeButton.className = "clsBtn"
     closeButton.textContent = "x";
     
     modalContent.append(closeButton, modalText, inputCity, button);
@@ -269,20 +269,22 @@ function showAddCityModal() {
         modal.style.display = "none";
     })
 
-    document.getElementById("cityInputBtn").addEventListener('click', async () => {
-        const cityValue = document.getElementById("inputCity").value.trim();
+    document.querySelector(".cityInputBtn").addEventListener('click', async () => {
+        const cityValue = document.querySelector(".inputCity").value.trim();cityValue
+        console.log()
         const currentCity = JSON.parse(localStorage.getItem('currentCity'));
         if (cityValue === "" || cityValue === currentCity) {
             alert('введите что-то еще')
             return;
         }
         const coords = await getCityCoords(cityValue);
+        console.log(coords)
         modal.style.display = "none";
         const otherCities = JSON.parse(localStorage.getItem('otherCities')) || [];
         if (!otherCities.includes(cityValue)) {
             otherCities.push(cityValue);
             localStorage.setItem('otherCities', JSON.stringify(otherCities));
-            createWeatherCard(cityValue, coords.latitude, coords.longitude);
+            await createWeatherCard(cityValue, coords.latitude, coords.longitude);
         }    
     })
 }
@@ -297,6 +299,13 @@ document.getElementById("updateWeather").addEventListener('click', async () => {
     await start();
 })
 
+function createSkeleton() {
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton-card';
+    document.getElementById('weather-container').appendChild(skeleton);
+    return skeleton;
+}
+
+
 start();
-console.log(localStorage)
 // localStorage.clear()
