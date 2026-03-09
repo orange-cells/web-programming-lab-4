@@ -275,6 +275,12 @@ document.getElementById("addCity").addEventListener('click', () => {
     showAddCityModal();
 })
 
+document.getElementById("updateWeather").addEventListener('click', async () => {
+    const existingCards = document.querySelectorAll('.weather-card');
+    existingCards.forEach(card => card.remove());
+    await start();
+})
+
 start();
 console.log(localStorage)
 // localStorage.clear()
