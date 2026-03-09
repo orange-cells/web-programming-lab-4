@@ -56,7 +56,7 @@ main {
     width: 300px;
     text-align: center;
 }
-#inputCity {
+.inputCity {
     height: 30px;
     border-radius: 18px;;
 }
@@ -120,7 +120,7 @@ h2 {
     background: #fff;
     border-radius: 8px;
 }
-.delete-button, #clsBtn {
+.delete-button, .clsBtn {
     margin-top: 10px;
     height: 30px;
     width: 30px;
@@ -130,4 +130,18 @@ h2 {
     .weather-columns {
         flex-direction: column;
     }
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+.skeleton-card {
+    width: 100%;
+    max-width: 800px;
+    height: 250px;
+    background: #e0e0e0;
+    margin: 20px auto;
+    border-radius: 20px;
+    animation: pulse 1.5s infinite ease-in-out;
 }
