@@ -269,24 +269,23 @@ function showAddCityModal() {
         modal.style.display = "none";
     })
 
-    document.querySelector(".cityInputBtn").addEventListener('click', async () => {
-        const cityValue = document.querySelector(".inputCity").value.trim();cityValue
-        console.log()
-        const currentCity = JSON.parse(localStorage.getItem('currentCity'));
-        if (cityValue === "" || cityValue === currentCity) {
-            alert('введите что-то еще')
-            return;
-        }
-        const coords = await getCityCoords(cityValue);
-        console.log(coords)
-        modal.style.display = "none";
-        const otherCities = JSON.parse(localStorage.getItem('otherCities')) || [];
-        if (!otherCities.includes(cityValue)) {
-            otherCities.push(cityValue);
-            localStorage.setItem('otherCities', JSON.stringify(otherCities));
-            await createWeatherCard(cityValue, coords.latitude, coords.longitude);
-        }    
-    })
+    modal.addEventListener('click', async function(event) {
+        if (event.target && event.target.classList.contains('cityInputBtn')) {
+            const cityValue = modal.querySelector(".inputCity").value.trim();
+            const currentCity = JSON.parse(localStorage.getItem('currentCity'));
+            if (cityValue === "" || cityValue === currentCity) {
+                alert('введите что-то еще')
+                return;
+            }
+            const coords = await getCityCoords(cityValue);
+            modal.style.display = "none";
+            const otherCities = JSON.parse(localStorage.getItem('otherCities')) || [];
+            if (!otherCities.includes(cityValue)) {
+                otherCities.push(cityValue);
+                localStorage.setItem('otherCities', JSON.stringify(otherCities));
+                await createWeatherCard(cityValue, coords.latitude, coords.longitude);
+            }  
+        }})
 }
 
 document.getElementById("addCity").addEventListener('click', () => {
